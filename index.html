@@ -22,15 +22,6 @@
     100% { opacity: 1; transform: translateX(0); }
   }
 
-  /* Bouton son en haut à droite : une seule icône, clic = couper / remettre la musique */
-  #sound { position: fixed; top: 40px; right: 60px; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(6,12,40,.65); border: 1px solid rgba(70,110,255,.45); backdrop-filter: blur(6px); color: #fff; transition: background .2s, border-color .2s, transform .15s; }
-  #sound:hover { background: rgba(20,40,120,.75); border-color: #2f6bff; transform: scale(1.06); }
-  #sound svg { width: 26px; height: 26px; fill: currentColor; }
-  #sound .off { display: none; }
-  #sound.muted .on { display: none; }
-  #sound.muted .off { display: block; }
-  #sound.muted { color: #ff5a67; border-color: rgba(255,90,103,.5); }
-
   /* Info en bas à gauche */
   #info { position: fixed; left: 60px; bottom: 56px; display: flex; align-items: center; gap: 14px; font-size: 22px; font-weight: 500; text-shadow: 0 2px 8px #000; }
   #info em { font-style: normal; font-weight: 700; font-size: 15px; letter-spacing: 3px; padding: 4px 12px; border-radius: 5px; background: #c8202f; }
@@ -49,23 +40,12 @@
   <span>HELDORA <b>RP</b></span>
 </div>
 
-<div id="sound" title="Couper / remettre la musique">
-  <svg class="on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
-  <svg class="off" viewBox="0 0 24 24"><path d="M16.5 12a4.5 4.5 0 0 0-2.5-4v2.2l2.4 2.4c.1-.2.1-.4.1-.6zM19 12c0 .9-.2 1.8-.5 2.6l1.5 1.5A8.9 8.9 0 0 0 21 12a9 9 0 0 0-7-8.8v2.1a7 7 0 0 1 5 6.7zM4.3 3L3 4.3 7.7 9H3v6h4l5 5v-6.7l4.2 4.2c-.7.5-1.4.9-2.2 1.1v2.1a9 9 0 0 0 3.5-1.8l2 2 1.3-1.3L4.3 3zM12 4L9.9 6.1 12 8.2V4z"/></svg>
-</div>
-
 <div id="info"><em>INFO</em><span id="tip"></span></div>
 <div id="status">Connexion au serveur...</div>
 <div id="bar"></div>
 
-<audio id="music" loop></audio>
-
 <script>
   // ====== A MODIFIER ======
-  // Noms exacts de tes fichiers dans le dossier "music"
-  // Le son essaie d'abord music/musique.mp3, puis musique.mp3 (à la racine) si le dossier n'existe pas
-  var SOURCES = ['music/musique.mp3', 'musique.mp3'];
-  var VOLUME = 0.08; // 0 à 1
   var TIPS = [
     'Restez dans votre rôle en toutes circonstances.',
     'Respectez les règles du serveur et le staff.',
@@ -74,28 +54,7 @@
   ];
   // ========================
 
-  var audio = document.getElementById('music'), sound = document.getElementById('sound'),
-      tip = document.getElementById('tip'), n = 0, t = 0, srcIdx = 0;
-
-  // Musique
-  audio.volume = VOLUME;
-  function load() { audio.src = SOURCES[srcIdx]; audio.play().catch(function(){}); }
-  audio.addEventListener('error', function(){ if (srcIdx < SOURCES.length - 1) { srcIdx++; load(); } });
-  load();
-  // Si le navigateur bloque la lecture automatique, elle démarre au premier clic / touche / mouvement
-  function unlock() { if (audio.paused) audio.play().catch(function(){}); }
-  ['click', 'keydown', 'mousemove'].forEach(function(e){ document.addEventListener(e, unlock, { once: true }); });
-
-  // Bouton son : un clic coupe, un autre clic remet
-  function toggleSound() {
-    audio.muted = !audio.muted;
-    sound.classList.toggle('muted', audio.muted);
-    if (!audio.muted && audio.paused) audio.play().catch(function(){});
-  }
-  sound.addEventListener('click', toggleSound);
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'm' || e.key === 'M') toggleSound();
-  });
+  var tip = document.getElementById('tip'), t = 0;
 
   // Astuces qui tournent
   function showTip() {
