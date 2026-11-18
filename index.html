@@ -19,8 +19,7 @@
   @keyframes brand {
     0%   { opacity: 0; transform: translateX(-20px); }
     10%  { opacity: 1; transform: translateX(0); }
-    80%  { opacity: 1; transform: translateX(0); }
-    100% { opacity: 0; transform: translateX(-20px); }
+    100% { opacity: 1; transform: translateX(0); }
   }
 
   /* Bouton son en haut à droite : une seule icône, clic = couper / remettre la musique */
@@ -88,10 +87,14 @@
   ['click', 'keydown', 'mousemove'].forEach(function(e){ document.addEventListener(e, unlock, { once: true }); });
 
   // Bouton son : un clic coupe, un autre clic remet
-  sound.addEventListener('click', function(){
+  function toggleSound() {
     audio.muted = !audio.muted;
     sound.classList.toggle('muted', audio.muted);
     if (!audio.muted && audio.paused) audio.play().catch(function(){});
+  }
+  sound.addEventListener('click', toggleSound);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'm' || e.key === 'M') toggleSound();
   });
 
   // Astuces qui tournent
